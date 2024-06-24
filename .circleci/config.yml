@@ -55,8 +55,8 @@ workflows:
   build:
     jobs:
       - build-arm
-      - build-x86
-      - publish:
-          requires:
-            - build-arm
-            - build-x86
+#      - build-x86
+#      - publish:
+#          requires:
+#            - build-arm
+#            - build-x86
