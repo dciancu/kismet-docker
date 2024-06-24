@@ -1,4 +1,4 @@
-FROM debian:stable-slim as builder
+FROM debian:12-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
@@ -56,3 +56,23 @@ RUN ./configure
 RUN make -j "$(nproc)"
 #RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
+
+
+FROM debian:12-slim AS image
+
+COPY --from=builder /opt/kismet-build /opt/kismet-build
+
+RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
+    set -euo pipefail \
+    && apt-get update \
+    && apt-get install -y apt-transport-https ca-certificates \
+    && sed -i 's/http:/https:/g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
+    && apt-get -y upgrade \
+    && apt-get -y dist-upgrade \
+    && apt-get --purge autoremove -y \
+    && apt-get --no-install-recommends -y install make
+
+RUN set -euo pipefail \
+    && cd /opt/kismet-build \
+    && make suidinstall DESTDIR=/opt/kismet
