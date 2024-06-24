@@ -54,7 +54,7 @@ RUN set -euo pipefail \
 RUN ./configure
 #RUN make
 RUN make -j "$(nproc)"
-RUN make suidinstall DESTDIR=/opt/kismet
+#RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
 
 
