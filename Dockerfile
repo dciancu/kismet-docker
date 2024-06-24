@@ -28,9 +28,31 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 
 USER kismet-build
 WORKDIR /opt/kismet-build
-RUN git clone --depth 1 https://github.com/kismetwireless/kismet.git . && rm -rf .git
+
+ARG KISMET_STABLE
+ARG KISMET_REPO='https://github.com/kismetwireless/kismet.git'
+RUN set -euo pipefail \
+    && KISMET_STABLE="${KISMET_STABLE:-}" \
+    # KISMET_STABLE not set \
+    && test ! -z "$KISMET_STABLE" || BRANCH='master' \
+    # KISMET_STABLE set
+    && test -z "$KISMET_STABLE" || \
+        BRANCH="$(set -euo pipefail && git init &>/dev/null \
+            && git remote add origin "$KISMET_REPO" &>/dev/null \
+            && git ls-remote --tags origin \
+                | cut -f 2 \
+                | cut -d / -f 3 \
+                | grep -P '[kK]ismet-\d+-\d+-R[a-zA-Z0-9]+' \
+                | sort -V \
+                | tail -n 1 \
+                | tr -d '\n' \
+            && rm -rf .git &>/dev/null \
+        )" \
+    && echo "Cloning branch ${BRANCH} of ${KISMET_REPO}" \
+    && git clone --depth 1 --branch "$BRANCH" "$KISMET_REPO" . \
+    && rm -rf .git
 RUN ./configure
 #RUN make
-RUN make -j $(nproc)
+RUN make -j "$(nproc)"
 #RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
