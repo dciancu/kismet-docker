@@ -60,6 +60,9 @@ RUN make -j "$(nproc)"
 
 FROM debian:12-slim AS image
 
+ARG DEBIAN_FRONTEND=noninteractive
+SHELL ["/usr/bin/env", "bash", "-c"]
+
 COPY --from=builder /opt/kismet-build /opt/kismet-build
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
