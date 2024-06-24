@@ -3,7 +3,7 @@ jobs:
   build-arm:
     docker:
       - image: cimg/base:current
-    resource_class: arm.medium
+    resource_class: arm.large
     working_directory: /mnt/ramdisk
     environment:
       BUILD_ARCH: arm
@@ -21,7 +21,7 @@ jobs:
   build-x86:
     docker:
       - image: cimg/base:current
-    resource_class: medium
+    resource_class: large
     working_directory: /mnt/ramdisk
     environment:
       BUILD_ARCH: x86
