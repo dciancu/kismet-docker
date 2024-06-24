@@ -24,9 +24,8 @@ fi
 docker build -t "$image_stable_tag" --pull --build-arg KISMET_STABLE=1 .
 #docker build -t "$image_edge_tag" .
 
-# WIP
-#if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
-#    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
-#    docker push "$image_stable_tag"
+if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
+    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    docker push "$image_stable_tag"
 #    docker push "$image_edge_tag"
-#fi
+fi
