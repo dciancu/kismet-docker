@@ -54,7 +54,7 @@ RUN set -euo pipefail \
 RUN ./configure
 #RUN make
 RUN make -j "$(nproc)"
-#RUN make suidinstall DESTDIR=/opt/kismet
+RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
 
 
@@ -74,7 +74,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
     && apt-get --purge autoremove -y \
-    && apt-get --no-install-recommends -y install make
+    && apt-get --no-install-recommends -y install make gpsd
 
 RUN set -euo pipefail \
     && cd /opt/kismet-build \
