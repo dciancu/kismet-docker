@@ -22,7 +22,7 @@ else
 fi
 
 docker build -t "$image_stable_tag" --pull --build-arg KISMET_STABLE=1 .
-docker build -t "$image_edge_tag" .
+#docker build -t "$image_edge_tag" .
 
 # WIP
 #if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
