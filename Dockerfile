@@ -78,4 +78,4 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 
 RUN set -euo pipefail \
     && cd /opt/kismet-build \
-    && make suidinstall DESTDIR=/opt/kismet
+    # && make suidinstall DESTDIR=/opt/kismet
