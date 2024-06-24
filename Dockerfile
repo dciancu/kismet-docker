@@ -30,7 +30,7 @@ USER kismet-build
 WORKDIR /opt/kismet-build
 RUN git clone --depth 1 https://github.com/kismetwireless/kismet.git . && rm -rf .git
 RUN ./configure
-RUN make
-#RUN make -j $(nproc)
+#RUN make
+RUN make -j $(nproc)
 #RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
