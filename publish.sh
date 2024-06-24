@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
-image_name="${DOCKER_IMAGE:-dciancu/kismet-docker}"
+image_name="${DOCKER_IMAGE:-dciancu/kismet-wireless-docker}"
 
 function pushManifest() {
     docker manifest create "$1" "${2:-$1}-arm" "${2:-$1}-x86"

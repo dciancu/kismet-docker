@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$0")"
 cd "$SCRIPT_DIR"
 
-image_name="${DOCKER_IMAGE:-dciancu/kismet-docker}"
+image_name="${DOCKER_IMAGE:-dciancu/kismet-wireless-docker}"
 image_arch="${BUILD_ARCH:-$(arch | tr -d '\n')}"
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'test' ]]; then
