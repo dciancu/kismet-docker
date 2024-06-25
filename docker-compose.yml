@@ -7,5 +7,6 @@ services:
         network_mode: host
         restart: unless-stopped
         volumes:
-            - ./storage/conf:/conf
-            - ./storage/data:/data
+            #- ./storage/conf:/usr/local/etc
+            - ./storage/custom-conf:/mnt/custom-conf
+            - ./storage/data:/home/kismet

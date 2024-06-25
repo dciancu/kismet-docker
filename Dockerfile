@@ -63,7 +63,7 @@ RUN make -j "$(nproc)"
 USER root
 RUN addgroup --gid 1500 kismet
 RUN make suidinstall DESTDIR=/opt/kismet
-RUN make forceconfigs DESTDIR=/opt/kismet
+#RUN make forceconfigs DESTDIR=/opt/kismet
 
 
 FROM debian:12-slim AS image
@@ -99,12 +99,16 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         ) \
     && rm /etc/apt/sources.list.d/kismet.list /usr/share/keyrings/kismet-archive-keyring.gpg \
     && addgroup --gid 1500 kismet \
-    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet \
-    && mkdir /data \
-    && chown kismet:kismet /data
+    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet
 
 COPY --from=build /opt/kismet /
 RUN su -l -c 'kismet --version' kismet || true
+RUN echo -e '\ninclude=/mnt/custom-conf/kismet_custom.conf' >> /usr/local/etc/kismet.conf \
+    && mv /usr/local/etc /usr/local/etc.orig \
+    && mkdir /usr/local/etc \
+    && mv /home/kismet /home/kismet.orig \
+    && mkdir /home/kismet \
+    && mkdir /mnt/custom-conf
 
 COPY entrypoint.sh /
 

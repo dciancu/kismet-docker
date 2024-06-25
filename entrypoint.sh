@@ -2,13 +2,19 @@
 
 set -euo pipefail
 
-chown -R root:root /conf
-find /conf -type d -exec chmod 755 {} +
-find /conf -type f -exec chmod 644 {} +
-if [ -z "$(ls /conf)" ]; then
-    cp -a /usr/local/etc/* /conf/
+if [ -z "$(ls /usr/local/etc)" ]; then
+    cp -a /usr/local/etc.orig/. /usr/local/etc/
 fi
-chown -R kismet:kismet /data
-chmod 750 /data
+if [ ! -f /mnt/custom-conf/kismet_custom.conf ]; then
+    touch /mnt/custom-conf/kismet_custom.conf
+fi
+chown -R root:root /usr/local/etc /mnt/custom-conf
+find /usr/local/etc /mnt/custom-conf -type d -exec chmod 755 {} +
+find /usr/local/etc /mnt/custom-conf -type f -exec chmod 644 {} +
+if [ -z "$(ls -a /home/kismet)" ]; then
+    cp -a /home/kismet.orig/. /home/kismet/
+fi
+chown -R kismet:kismet /home/kismet
+chmod 700 /home/kismet
 
-su -l -c 'kismet --no-ncurses --homedir=/data --confdir=/conf' kismet
+su -l -c 'kismet --no-ncurses' kismet
