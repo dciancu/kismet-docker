@@ -1,0 +1,7 @@
+services:
+    kismet:
+        container_name: kismet
+        image: dciancu/kismet-wireless-docker:stable
+        privileged: true
+        network_mode: host
+        restart: unless-stopped
