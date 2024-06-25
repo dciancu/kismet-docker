@@ -69,8 +69,6 @@ FROM debian:12-slim AS image
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 
-COPY --from=build /opt/kismet /opt/kismet
-
 ARG KISMET_APT_KEY_URL='https://www.kismetwireless.net/repos/kismet-release.gpg.key'
 ARG KISMET_APT_URL='https://www.kismetwireless.net/repos/apt/release/bookworm'
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
@@ -99,6 +97,9 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && rm /etc/apt/sources.list.d/kismet.list /usr/share/keyrings/kismet-archive-keyring.gpg \
     && addgroup --gid 1500 kismet \
     && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet
+
+COPY --from=build /opt/kismet /opt/kismet
+RUN /opt/kismet/usr/local/bin/kismet --version
 
 EXPOSE 2501/tcp
 EXPOSE 3501/tcp
