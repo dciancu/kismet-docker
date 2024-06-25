@@ -1,4 +1,4 @@
-FROM debian:12-slim as builder
+FROM debian:12-slim as build
 
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
