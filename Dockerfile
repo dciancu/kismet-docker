@@ -30,6 +30,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 USER kismet-build
 WORKDIR /opt/kismet-build
 
+COPY configure_override.txt /opt/
+
 ARG KISMET_STABLE
 ARG KISMET_REPO_URL
 ARG KISMET_REPO='https://github.com/kismetwireless/kismet.git'
@@ -54,7 +56,7 @@ RUN set -euo pipefail \
     && echo "Cloning branch ${BRANCH} of ${KISMET_REPO_URL}" \
     && git clone --depth 1 --branch "$BRANCH" "$KISMET_REPO_URL" . \
     && rm -rf .git
-RUN ./configure
+RUN ./configure $(grep -o '^[^#]*' /opt/configure_override.txt | tr '\n' ' ')
 #RUN make
 RUN make -j "$(nproc)"
 
