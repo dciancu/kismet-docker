@@ -98,10 +98,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && addgroup --gid 1500 kismet \
     && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet
 
-COPY --from=build /opt/kismet /opt/kismet
+COPY --from=build /opt/kismet /
 USER kismet
-RUN /opt/kismet/usr/local/bin/kismet --version || true
+RUN /usr/local/bin/kismet --version || true
 
 EXPOSE 2501/tcp
 EXPOSE 3501/tcp
-CMD ["/opt/kismet/usr/local/bin/kismet", "--no-ncurses"]
+CMD ["/usr/local/bin/kismet", "--no-ncurses"]
