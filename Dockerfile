@@ -57,6 +57,8 @@ RUN make -j "$(nproc)"
 #RUN make suidinstall DESTDIR=/opt/kismet
 #RUN make forceconfigs DESTDIR=/opt/kismet
 
+USER root
+
 
 FROM debian:12-slim AS image
 
