@@ -31,9 +31,11 @@ USER kismet-build
 WORKDIR /opt/kismet-build
 
 ARG KISMET_STABLE
+ARG KISMET_REPO_URL
 ARG KISMET_REPO='https://github.com/kismetwireless/kismet.git'
 RUN set -euo pipefail \
     && KISMET_STABLE="${KISMET_STABLE:-}" \
+    && KISMET_REPO_URL="${KISMET_REPO_URL:-$KISMET_REPO}" \
     # KISMET_STABLE not set \
     && test ! -z "$KISMET_STABLE" || BRANCH='master' \
     # KISMET_STABLE set
