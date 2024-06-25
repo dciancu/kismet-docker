@@ -69,7 +69,7 @@ FROM debian:12-slim AS image
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 
-COPY --from=builder /opt/kismet /opt/kismet
+COPY --from=build /opt/kismet /opt/kismet
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
@@ -101,4 +101,5 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 EXPOSE 2501/tcp
 EXPOSE 3501/tcp
 USER kismet
+WORKDIR /
 CMD ["/opt/kismet/usr/local/bin/kismet", "--no-ncurses"]
