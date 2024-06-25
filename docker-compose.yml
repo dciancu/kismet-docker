@@ -2,6 +2,10 @@ services:
     kismet:
         container_name: kismet
         image: dciancu/kismet-wireless-docker:stable
+        init: true
         privileged: true
         network_mode: host
         restart: unless-stopped
+        volumes:
+            - ./storage/conf:/conf
+            - ./storage/data:/data

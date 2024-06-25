@@ -98,12 +98,15 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         ) \
     && rm /etc/apt/sources.list.d/kismet.list /usr/share/keyrings/kismet-archive-keyring.gpg \
     && addgroup --gid 1500 kismet \
-    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet
+    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet \
+    && mkdir /data \
+    && chown kismet:kismet /data
 
 COPY --from=build /opt/kismet /
-USER kismet
-RUN /usr/local/bin/kismet --version || true
+RUN su -l -c 'kismet --version' kismet || true
+
+COPY entrypoint.sh /
 
 EXPOSE 2501/tcp
 EXPOSE 3501/tcp
-CMD ["/usr/local/bin/kismet", "--no-ncurses"]
+CMD ["/bin/bash", "/entrypoint.sh"]
