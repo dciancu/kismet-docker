@@ -103,7 +103,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 
 COPY --from=build /opt/kismet /
 RUN su -l -c 'kismet --version' kismet || true
-RUN echo -e '\ninclude=/mnt/custom-conf/kismet_custom.conf' >> /usr/local/etc/kismet.conf \
+RUN echo -e '\nopt_override=/mnt/custom-conf/kismet_custom.conf' >> /usr/local/etc/kismet.conf \
     && mv /usr/local/etc /usr/local/etc.orig \
     && mkdir /usr/local/etc \
     && mv /home/kismet /home/kismet.orig \
