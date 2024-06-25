@@ -103,5 +103,4 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
 EXPOSE 2501/tcp
 EXPOSE 3501/tcp
 USER kismet
-WORKDIR /
 CMD ["/opt/kismet/usr/local/bin/kismet", "--no-ncurses"]
