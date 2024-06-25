@@ -38,7 +38,7 @@ RUN set -euo pipefail \
     && KISMET_REPO_URL="${KISMET_REPO_URL:-$KISMET_REPO}" \
     # KISMET_STABLE not set \
     && test ! -z "$KISMET_STABLE" || BRANCH='master' \
-    # KISMET_STABLE set
+    # KISMET_STABLE set \
     && test -z "$KISMET_STABLE" || \
         BRANCH="$(set -euo pipefail && git init &>/dev/null \
             && git remote add origin "$KISMET_REPO_URL" &>/dev/null \
@@ -71,6 +71,8 @@ SHELL ["/usr/bin/env", "bash", "-c"]
 
 COPY --from=build /opt/kismet /opt/kismet
 
+ARG KISMET_APT_KEY_URL='https://www.kismetwireless.net/repos/kismet-release.gpg.key'
+ARG KISMET_APT_URL='https://www.kismetwireless.net/repos/apt/release/bookworm'
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
     && apt-get update \
@@ -81,11 +83,11 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y dist-upgrade \
     && apt-get --purge autoremove -y \
     && apt-get --no-install-recommends -y install gpg wget \
-    && wget -O - https://www.kismetwireless.net/repos/kismet-release.gpg.key --quiet \
+    && wget -O - "$KISMET_APT_KEY_URL" --quiet \
         | gpg --dearmor \
         | tee /usr/share/keyrings/kismet-archive-keyring.gpg >/dev/null \
-    && echo 'deb [signed-by=/usr/share/keyrings/kismet-archive-keyring.gpg] https://www.kismetwireless.net/repos/apt/release/bookworm bookworm main' \
-        | tee /etc/apt/sources.list.d/kismet.list >/dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/kismet-archive-keyring.gpg] ${KISMET_APT_URL} ${KISMET_APT_URL##*/} main" \
+        | tee /etc/apt/sources.list.d/kismet.list \
     && apt-get update \
     && apt-get --no-install-recommends -y install \
         $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances kismet \
