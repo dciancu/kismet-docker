@@ -90,6 +90,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         | tee /etc/apt/sources.list.d/kismet.list \
     && apt-get update \
     && apt-get --no-install-recommends -y install \
+        libubertooth1 \
         $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances kismet \
             | grep '^\w' \
             | grep -Pv 'kismet|libelogind0' \
