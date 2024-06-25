@@ -78,6 +78,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
     && apt-get --purge autoremove -y \
+    && apt-get --no-install-recommends -y install gpg wget \
     && wget -O - https://www.kismetwireless.net/repos/kismet-release.gpg.key --quiet \
         | gpg --dearmor \
         | tee /usr/share/keyrings/kismet-archive-keyring.gpg >/dev/null \
