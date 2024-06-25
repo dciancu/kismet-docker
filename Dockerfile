@@ -24,7 +24,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
         librtlsdr0 libubertooth-dev libbtbb-dev libmosquitto-dev rtl-433 \
     && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login kismet-build \
     && mkdir /opt/kismet-build \
-    && chown kismet-build:kismet-build /opt/kismet-build
+    && mkdir /opt/kismet \
+    && chown kismet-build:kismet-build /opt/kismet-build /opt/kismet
 
 USER kismet-build
 WORKDIR /opt/kismet-build
@@ -54,10 +55,11 @@ RUN set -euo pipefail \
 RUN ./configure
 #RUN make
 RUN make -j "$(nproc)"
-#RUN make suidinstall DESTDIR=/opt/kismet
-#RUN make forceconfigs DESTDIR=/opt/kismet
 
 USER root
+RUN addgroup --gid 1500 kismet
+RUN make suidinstall DESTDIR=/opt/kismet
+#RUN make forceconfigs DESTDIR=/opt/kismet
 
 
 FROM debian:12-slim AS image
@@ -65,7 +67,7 @@ FROM debian:12-slim AS image
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/usr/bin/env", "bash", "-c"]
 
-COPY --from=builder /opt/kismet-build /opt/kismet-build
+COPY --from=builder /opt/kismet /opt/kismet
 
 RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,type=cache \
     set -euo pipefail \
@@ -76,8 +78,24 @@ RUN --mount=target=/var/lib/apt/lists,type=cache --mount=target=/var/cache/apt,t
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
     && apt-get --purge autoremove -y \
-    && apt-get --no-install-recommends -y install make gpsd
+    && wget -O - https://www.kismetwireless.net/repos/kismet-release.gpg.key --quiet \
+        | gpg --dearmor \
+        | tee /usr/share/keyrings/kismet-archive-keyring.gpg >/dev/null \
+    && echo 'deb [signed-by=/usr/share/keyrings/kismet-archive-keyring.gpg] https://www.kismetwireless.net/repos/apt/release/bookworm bookworm main' \
+        | tee /etc/apt/sources.list.d/kismet.list >/dev/null \
+    && apt-get update \
+    && apt-get --no-install-recommends -y install \
+        $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances kismet \
+            | grep '^\w' \
+            | grep -Pv 'kismet|libelogind0' \
+            | sort -u \
+            | tr '\n' ' ' \
+        ) \
+    && rm /etc/apt/sources.list.d/kismet.list /usr/share/keyrings/kismet-archive-keyring.gpg \
+    && addgroup --gid 1500 kismet \
+    && adduser --gecos '' --shell /bin/bash --disabled-password --disabled-login --gid 1500 kismet
 
-RUN set -euo pipefail \
-    && cd /opt/kismet-build \
-    # && make suidinstall DESTDIR=/opt/kismet
+EXPOSE 2501/tcp
+EXPOSE 3501/tcp
+USER kismet
+CMD ["/opt/kismet/usr/local/bin/kismet", "--no-ncurses"]
