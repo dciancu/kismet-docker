@@ -41,7 +41,7 @@ RUN set -euo pipefail \
     # KISMET_STABLE set
     && test -z "$KISMET_STABLE" || \
         BRANCH="$(set -euo pipefail && git init &>/dev/null \
-            && git remote add origin "$KISMET_REPO" &>/dev/null \
+            && git remote add origin "$KISMET_REPO_URL" &>/dev/null \
             && git ls-remote --tags origin \
                 | cut -f 2 \
                 | cut -d / -f 3 \
@@ -51,8 +51,8 @@ RUN set -euo pipefail \
                 | tr -d '\n' \
             && rm -rf .git &>/dev/null \
         )" \
-    && echo "Cloning branch ${BRANCH} of ${KISMET_REPO}" \
-    && git clone --depth 1 --branch "$BRANCH" "$KISMET_REPO" . \
+    && echo "Cloning branch ${BRANCH} of ${KISMET_REPO_URL}" \
+    && git clone --depth 1 --branch "$BRANCH" "$KISMET_REPO_URL" . \
     && rm -rf .git
 RUN ./configure
 #RUN make
