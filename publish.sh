@@ -15,11 +15,16 @@ function pushManifest() {
 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]] && [[ "$CIRCLE_BRANCH" == 'test' ]]; then
-    pushManifest "${image_name}:test"
+    pushManifest "${image_name}:test-stable"
+    pushManifest "${image_name}:test-edge"
+    pushManifest "${image_name}:test-build-stable"
+    pushManifest "${image_name}:test-build-edge"
 else
-    pushManifest "${image_name}:latest"
+    pushManifest "${image_name}:stable"
+    pushManifest "${image_name}:edge"
 
     version="$(tr -d '\n' < VERSION.txt)"
-    pushManifest "${image_name}:${version}" "${image_name}:latest"
+    pushManifest "${image_name}:stable-${version}" "${image_name}:stable"
+    pushManifest "${image_name}:edge-${version}" "${image_name}:edge"
 fi
 

@@ -33,7 +33,7 @@ docker build --target build -t "$build_stable_tag" --pull \
     --build-arg KISMET_STABLE=1 --build-arg "KISMET_REPO_URL=${KISMET_REPO_URL:-}" .
 #docker build --target build -t "$build_edge_tag" --build-arg "KISMET_REPO_URL=${KISMET_REPO_URL:-}" .
 
-docker build -t "$image_stable_tag" --pull --build-arg KISMET_STABLE=1 --build-arg "KISMET_REPO_URL=${KISMET_REPO_URL:-}" .
+docker build -t "$image_stable_tag" --build-arg KISMET_STABLE=1 --build-arg "KISMET_REPO_URL=${KISMET_REPO_URL:-}" .
 #docker build -t "$image_edge_tag" --build-arg "KISMET_REPO_URL=${KISMET_REPO_URL:-}" .
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
