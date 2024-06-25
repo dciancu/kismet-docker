@@ -25,11 +25,12 @@ else
     build_edge_tag="${image_name}:build-edge-${image_arch}"
 fi
 
-docker build --target build -t "$build_stable_tag" --pull --build-arg KISMET_STABLE=1 --build-arg "${KISMET_REPO:-}" .
-#docker build --target build -t "$build_edge_tag" --build-arg "${KISMET_REPO:-}" .
+docker build --target build -t "$build_stable_tag" --pull \
+    --build-arg KISMET_STABLE=1 --build-arg "KISMET_REPO=${KISMET_REPO:-}" .
+#docker build --target build -t "$build_edge_tag" --build-arg "KISMET_REPO=${KISMET_REPO:-}" .
 
-docker build -t "$image_stable_tag" --pull --build-arg KISMET_STABLE=1 --build-arg "${KISMET_REPO:-}" .
-#docker build -t "$image_edge_tag" --build-arg "${KISMET_REPO:-}" .
+docker build -t "$image_stable_tag" --pull --build-arg KISMET_STABLE=1 --build-arg "KISMET_REPO=${KISMET_REPO:-}" .
+#docker build -t "$image_edge_tag" --build-arg "KISMET_REPO=${KISMET_REPO:-}" .
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
